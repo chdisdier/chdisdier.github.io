@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- La hoja de estilos, que vamos a cargar: -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+integrity="sha512-
+Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+crossorigin=""/>
+<!-- La libreria javascript que vamos a utilizar , **** asegurate siempre de poner antes la hoja de estilos*** -->
+<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+integrity="sha512-
+/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+crossorigin=""></script>
+	
+	<script type="text/javascript" src="Zepim.js"> </script>
+	<script type="text/javascript" src="CorredorCetaceos.js"> </script>
+	<script type="text/javascript" src="Angula.js"> </script>
+	<script type="text/javascript" src="Casablanca.js"> </script>
+	<script type="text/javascript" src="Lubina.js"> </script>
+	<script type="text/javascript" src="Ramsar.js"> </script>
+	<script type="text/javascript" src="Medusa.js"> </script>
+	<script type="text/javascript" src="MontanazoD.js"> </script>
+	<script type="text/javascript" src="Rodaballo.js"> </script>
+
+
+	<style>
+		#zona_reservada_map {
+		width: 100%;
+		height: 600px;
+		box-shadow: 5px 5px 5px #777;
+		}
+	</style>
+</head>
+<body style="background-color: skyblue;"> 
+
+
+
+<h1> Mapa de proyectos de prospecciones petroleras en el Mediterráneo occidental</h1>
+<h3>Alianza Mar Blava es una gran plataforma multisectorial de más de 120 entidades: administraciones públicas, sector empresarial y organizaciones sociales. Su objetivo es la protección del Mediterráneo, centrandose en la detención de cualquier proyecto petrolífero y en la promoción una navegación menos contaminante en la región levantino-balear.
+	
+Numerosas son sus victorias conseguidas hasta el momento. </h3>
+<h4> En este mapa interactivo puedes ver las zonas protegidas (capas verdes) y las areas de permisos para extracciones petroleras (color rojo).</h4>
+	<div id="zona_reservada_map"></div>
+			<script type="text/javascript">
+	alert ("La página está en construcción");
+		</script>
+
+	</script><script >
+	// vamos a dar color al mapa
+
+
+
+	var estilo_lineas1 = {
+	'color': "red",
+	'weight': 2,
+	};
+
+	var estilo_posi = {
+	'color': "green",
+	};
+
+		
+				
+
+
+
+
+
+	// Vamos a cargar una capa base de open street map, lo haremos como un tile layer.Para ello habrá que definirle la URL, el texto con la atribución y el máximo nivel de zoom de la capa.
+	var capaBASE = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+	+'contributors',
+	maxZoom: 25,
+	});
+
+
+	
+	var Zepim=L.geoJSON(Zepim, {style: estilo_posi});
+	var CorredorCetaceos=L.geoJSON(CorredorCetaceos, {style: estilo_posi});
+	var Angula=L.geoJSON(Angula, {style: estilo_lineas1});
+	var Casablanca=L.geoJSON(Casablanca, {style: estilo_lineas1});
+	var Lubina=L.geoJSON(Lubina, {style: estilo_lineas1});
+	var Ramsar=L.geoJSON(Ramsar, {style: estilo_posi});
+	var Medusa=L.geoJSON(Medusa, {style: estilo_lineas1});
+	var MontanazoD=L.geoJSON(MontanazoD, {style: estilo_lineas1});
+	var Rodaballo=L.geoJSON(Rodaballo, {style: estilo_lineas1});
+
+
+
+	var ZonasProtegidas = L.layerGroup([Zepim, CorredorCetaceos, Ramsar]);
+
+
+	var mapasbase ={"OpenStreetMap":capaBASE};
+
+	var superpuestos ={
+	
+	"Zepim (RedNatura2000)": Zepim,
+	"Corredor de cetáceos (RedNatura2000)": CorredorCetaceos,
+	"Ramsar (RedNatura2000)": Ramsar,
+	"Proyecto Angula": Angula,
+	"Proyecto Casablanca": Casablanca,
+	"Proyecto Lubina": Lubina,
+	"Proyecto Medusa" : Medusa,
+	"Proyecto MontanazoD": MontanazoD,
+	"Proyecto Rodaballo": Rodaballo
+		
+	};
+
+
+
+
+
+	// Recordad hasta ahora solamente le hemos dicho que queremos la capa de OSM (OpenStreet MAP)
+	// Este es mi variable mapa y por tanto la "mas importante"
+	var mapa = L.map('zona_reservada_map', {
+	center: [40.250194,1.892912], // Primero latitud y luego longitud
+	zoom: 8,
+	layers: [ capaBASE, Zepim, Ramsar, CorredorCetaceos, Angula, Casablanca, Lubina, Medusa, MontanazoD, Rodaballo]
+	});
+	
+	L.control.layers(mapasbase, superpuestos,{collapsed:false}).addTo(mapa);
+
+
+
+
+
+
+// INTERACTIVIDAD - MARCADORES
+
+
+
+	L.control.scale().addTo(mapa);
+
+
+
+
+// Insertando una leyenda en el mapa
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+var div = L.DomUtil.create('div', 'info legend');
+
+div.innerHTML +=
+'<img alt="legend" src=" http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=usa:states" width="127" height="120" />';
+
+};
+
+legend.addTo(map);
+</script>
+
+</body>
+</html>
